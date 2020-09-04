@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+    ij-storage-db:
+        container_name: ij-storage-db
+        image: ij-storage-sql:latest
+        environment:
+          - MYSQL_ROOT_PASSWORD=ij-storage-sql-root-password
+        ports:
+          - "3306:3306"
+        expose:
+          - "3306"
+        volumes:
+          - C:\ij-storage-db:/var/lib/mysql/
+        command: mysqld --lower_case_table_names=1 --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --default-authentication-plugin=mysql_native_password --skip-mysqlx
+        networks:
+          - ij-storage-services
+    storage-service:
+        image: ij-storage:1.0
+        container_name: storage-service
+        networks:
+          - ij-storage-services
+        ports:
+          - "9080:9080"
+        depends_on:
+          - ij-storage-db
+        restart: always
+        environment:
+          - SPRING_DATASOURCE_URL=jdbc:mysql://ij-storage-db:3306/ijstorage?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+          - WAIT_HOSTS=ij-storage-db:3306
+          - WAIT_HOSTS_TIMEOUT=300
+          - WAIT_SLEEP_INTERVAL=30
+          - WAIT_HOST_CONNECT_TIMEOUT=30
+          - WAIT_BEFORE_HOSTS=3
+          - WAIT_AFTER_HOSTS=3
+          
+    nginx-proxy:
+       image: jwilder/nginx-proxy
+       container_name: nginx-proxy
+       ports:
+        - "80:80"
+        - "443:443"
+       volumes:
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+        - ./nginx/certs:/etc/nginx/certs
+       depends_on:
+        - vue-app-service
+          
+    vue-app-service:
+       image: ij-storage-vue:1.0
+       environment:
+        - VIRTUAL_HOST=ij-storage.io
+        - VIRTUAL_PORT=80
+networks:
+  ij-storage-services:

@@ -1,0 +1,4 @@
+FROM mysql:8.0.19
+# Copy the initial database script to the image 
+COPY ./init /docker-entrypoint-initdb.d
+

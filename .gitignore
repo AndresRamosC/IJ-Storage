@@ -1,0 +1,4 @@
+.idea
+/target
+/nginx/certs/ij-storage.io.crt
+/nginx/certs/ij-storage.io.key

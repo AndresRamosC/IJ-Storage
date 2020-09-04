@@ -35,6 +35,7 @@ Use the Send Device Data function with two parameters
 	```
  2. Once the certificates are created on the run folder run:
 	 ```
+	mkdir nginx\certs
     move ij-storage.io.pem ./nginx/certs/ij-storage.io.crt
 	move ij-storage.io-key.pem ./nginx/certs/ij-storage.io.key
 	```

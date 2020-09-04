@@ -9,5 +9,6 @@ docker build -t ij-storage-sql -f ./DockerfileDB .
 :: Create ssl certificates
 cd ..
 mkcert ij-storage.io
+mkdir nginx\certs
 move ij-storage.io.pem ./nginx/certs/ij-storage.io.crt
 move ij-storage.io-key.pem ./nginx/certs/ij-storage.io.key
